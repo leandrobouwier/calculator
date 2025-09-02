@@ -37,7 +37,7 @@
    </style>
 </head>
 
-<body className="text-(--text) font-(--font-sans)">
+<body class="bg-linear-[180deg,_#807ECE_0%,_#807ECE_100%] min-h-screen  text-(--text) font-(--font-sans)">
     <div id="root"></div>
 
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
@@ -105,6 +105,7 @@
             )
         }
 
+        /* Componente Card*/
         function Card({ children, className, ...props }) {
             return (
                 <div className={`bg-(--background) shadow-(--shadow) rounded-2xl ${className ? className : ''}`}>
@@ -114,28 +115,90 @@
             )
         }
 
+        /* Componente Display*/
+        function Display({operation, result}) {
+            return (
+                <div className={`flex flex-col gap-2 px-[1.375rem] cursor-default select-none`}>
+                    <Text as="div" variant="muted" className="flex items-center justify-end">
+                    {operation}
+                    </Text>
+                    <div className={`flex items-center justify-between`}>
+                        <Text variant="muted" className="">=</Text>
+                        <Text variant="blast" className="">{result}</Text>
+                    </div>
+                </div>
+            )
+        }
+        
+        /* Calculadora */
         function Calculator() {
             return (
-                <Card className={`flex flex-col gap-[1.625rem] w-[22.25rem]  
-                 pt-14 px-8 pb-8
-                
-                `}>
-                <dir className={`flex flex-col gap-2 px-[1.375rem] cursor-default select-none`}></dir>
-                <Text as="div">
-                
-                </Text>
-                
+                <Card className={`flex flex-col gap-[1.625rem] w-[22.25rem] pt-14 px-8 pb-8`}>
+                    <Display operation="1+1" result="2" />
+
+                    <div className={`flex flex-col gap-3`}>
+                        <div className={`flex  gap-3`}>
+                            <Button className={`w-16 h-16`}>CE</Button>
+                            <Button className={`flex-1 h-16`}>C</Button>
+                            <Button className={`w-16 h-16`} variant="primary">/</Button>
+                        </div>
+
+                        <div className={`flex  gap-3`}>
+                            <Button className={`w-16 h-16`}>7</Button>
+                            <Button className={`w-16 h-16`}>8</Button>
+                            <Button className={`w-16 h-16`}>9</Button>
+                            <Button className={`w-16 h-16`} variant="primary">X</Button>
+                        </div>
+
+                        <div className={`flex  gap-3`}>
+                            <Button className={`w-16 h-16`}>4</Button>
+                            <Button className={`w-16 h-16`}>5</Button>
+                            <Button className={`w-16 h-16`}>6</Button>
+                            <Button className={`w-16 h-16`} variant="primary">-</Button>
+                        </div>
+
+                        <div className={`flex  gap-3`}>
+                            <Button className={`w-16 h-16`}>1</Button>
+                            <Button className={`w-16 h-16`}>2</Button>
+                            <Button className={`w-16 h-16`}>3</Button>
+                            <Button className={`w-16 h-16`} variant="primary">+</Button>
+                        </div>
+
+                        <div className={`flex  gap-3`}>
+                            <Button className={`flex-1 h-16`}>0</Button>
+                            <Button className={`w-16 h-16`}>,</Button>
+                            <Button className={`w-16 h-16`} variant="primary">=</Button>
+                        </div>
+
+                    </div>
                 </Card>
             )
         }
 
-        /*Componente App*/
+        /* Historico */
+        function OperationHistory(){
+            return(
+                <Card className={`py-10 px-8  w-[22.25rem]`}>
+                    <Text as="h1" variant="heading" className={`mb-4`} >
+                        Hístorico de Operações
+                    </Text>
+
+                    <ul className="flex flex-col gap-3">
+                        <Text as="li">1 + 1 = 2</Text>
+                        <Text as="li">2 + 5 = 7</Text>
+                        <Text as="li">10 / 2 = 5</Text>
+                        <Text as="li">10 + 12 = 22</Text>
+                    </ul>
+                </Card>
+            )
+        }
+        
+        /*Execução */
         function App() {
             return (
-                <main className="py-28 px-4 ">
-                    <Card>
-                        Testando Card
-                    </Card>
+                <main className={`py-28 px-4 flex flex-col sm:flex-row  items-center sm:items-stretch gap-2`}>
+                    <Calculator />
+                    <OperationHistory />
                 </main>
             )
         }
