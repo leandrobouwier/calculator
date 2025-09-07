@@ -115,69 +115,137 @@
             )
         }
 
+        const buttons = [
+            [
+                { input: "CE" },
+                { input: "C", className: "flex-1 h-16" },
+                { input: "/", variant: "primary" }
+            ],
+            [
+                { input: "7" },
+                { input: "8" },
+                { input: "9" },
+                { input: "*", variant: "primary" },
+            ],
+            [
+                { input: "4" },
+                { input: "5" },
+                { input: "6" },
+                { input: "-", variant: "primary" },
+            ],
+            [
+                { input: "1" },
+                { input: "2" },
+                { input: "3" },
+                { input: "+", variant: "primary" },
+            ],
+            [
+                { input: "0", className: "flex-1 h-16" },
+                { input: "," },
+                { input: "=", className: "w-16 h-16 bg-[#7f45e2]" },
+            ]
+        ];
+
         /* Componente Display*/
-        function Display({operation, result}) {
+        function Display({ operation, result }) {
             return (
                 <div className={`flex flex-col gap-2 px-[1.375rem] cursor-default select-none`}>
-                    <Text as="div" variant="muted" className="flex items-center justify-end">
-                    {operation}
+                    <Text as="div" variant="muted" className="flex items-center justify-end h-7">
+                        {result && operation}
                     </Text>
-                    <div className={`flex items-center justify-between`}>
+                    <div className={`flex items-center justify-between h-9`}>
                         <Text variant="muted" className="">=</Text>
-                        <Text variant="blast" className="">{result}</Text>
+                        <Text variant="blast" className="">{result || operation}</Text>
                     </div>
                 </div>
             )
         }
-        
-        /* Calculadora */
+
+        /* Calculadora - funcao map feito para listar os botoes da const buttons */
         function Calculator() {
+            const [operation, setOperation] = React.useState('');
+            const [result, setResult] = React.useState('');
+
+            /* funcao evento de click nos numeros */
+            function handleInputClick(input) {
+                /* Clear na operação */
+                if (input === "C") {
+                    setOperation("");
+                    setResult("");
+                    return;
+                }
+
+                if(input === "CE"){
+                    setResult("");
+                    setOperation(operation.slice(0, -1))
+                    return;
+                }
+
+                /* funcao de click do botao igual, pra dar o resultado */
+
+                /* na parte replace, é usado uma expressão regular "/,/g" global, tudo da operação que tem virgula
+                vai se transformar em ponto "." com a funcao replace para poder fazer o calculo certo */
+
+                /* após o calculo fazemos o parseResult para não mudaro visual da virgula no display, usando outra
+                expressão regular e após isso passamos o parseResult para o setResult */
+
+                if (input === '=') {
+                    const operationResult = eval(operation.replace(/,/g, '.'));
+                    const parsedResult = operationResult.toString()?.replace(/\./g, ',')
+                    setResult(parsedResult)
+                    return;
+                }
+
+                /* se o resultado ja existir e quiser continuar a operação, ele vai verificar se o valor que ele entrou
+                é um numero, se n for um numero, ele vai colocar o meu resultado atual, vai verificar se é uma virgula n vai da espeaço e + o input  */
+                if (result) {
+                    setOperation(isNaN(input) ? `${result}${input}` : input)
+                    setResult('');
+                    return;
+                }
+
+                /* evitar virgula duplicada, garantir unicidade da virgula */
+                if (input === ',' && !operation.endsWith(',')) {
+                    setOperation(`${operation},`);
+                    return;
+                }
+
+                /* Tela da Calculadora  ${operation}  e ${input} */
+
+                /* essa parte do codigo trata a questão do espaço na virgula
+                ${operation.endsWith(',') ?"": " "} */
+
+
+                setOperation(`${operation}${input}`)
+            }
+
             return (
                 <Card className={`flex flex-col gap-[1.625rem] w-[22.25rem] pt-14 px-8 pb-8`}>
-                    <Display operation="1+1" result="2" />
+                    <Display operation={operation} result={result} />
 
                     <div className={`flex flex-col gap-3`}>
-                        <div className={`flex  gap-3`}>
-                            <Button className={`w-16 h-16`}>CE</Button>
-                            <Button className={`flex-1 h-16`}>C</Button>
-                            <Button className={`w-16 h-16`} variant="primary">/</Button>
-                        </div>
-
-                        <div className={`flex  gap-3`}>
-                            <Button className={`w-16 h-16`}>7</Button>
-                            <Button className={`w-16 h-16`}>8</Button>
-                            <Button className={`w-16 h-16`}>9</Button>
-                            <Button className={`w-16 h-16`} variant="primary">X</Button>
-                        </div>
-
-                        <div className={`flex  gap-3`}>
-                            <Button className={`w-16 h-16`}>4</Button>
-                            <Button className={`w-16 h-16`}>5</Button>
-                            <Button className={`w-16 h-16`}>6</Button>
-                            <Button className={`w-16 h-16`} variant="primary">-</Button>
-                        </div>
-
-                        <div className={`flex  gap-3`}>
-                            <Button className={`w-16 h-16`}>1</Button>
-                            <Button className={`w-16 h-16`}>2</Button>
-                            <Button className={`w-16 h-16`}>3</Button>
-                            <Button className={`w-16 h-16`} variant="primary">+</Button>
-                        </div>
-
-                        <div className={`flex  gap-3`}>
-                            <Button className={`flex-1 h-16`}>0</Button>
-                            <Button className={`w-16 h-16`}>,</Button>
-                            <Button className={`w-16 h-16`} variant="primary">=</Button>
-                        </div>
-
+                        {buttons.map((row, index) => (
+                            <div key={`row-${index}`} className={`flex  gap-3`}>
+                                {row.map(button => (
+                                    <Button
+                                        key={button.input}
+                                        className={button.className || `w-16 h-16`}
+                                        variant={button.variant}
+                                        onClick={() => handleInputClick(button.input)}
+                                    >
+                                        {button.input}
+                                    </Button>
+                                ))}
+                            </div>
+                        ))}
                     </div>
                 </Card>
             )
         }
 
         /* Historico */
-        function OperationHistory(){
-            return(
+        function OperationHistory() {
+            return (
                 <Card className={`py-10 px-8  w-[22.25rem]`}>
                     <Text as="h1" variant="heading" className={`mb-4`} >
                         Hístorico de Operações
@@ -192,7 +260,7 @@
                 </Card>
             )
         }
-        
+
         /*Execução */
         function App() {
             return (
