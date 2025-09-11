@@ -170,29 +170,14 @@
                 <CalculatorContext.Provider value={{ history, updateHistory }}>{children}</CalculatorContext.Provider>
             )
         }
-        /* Componente Display*/
-        function Display({ operation, result }) {
-            return (
-                <div className={`flex flex-col gap-2 px-[1.375rem] cursor-default select-none`}>
-                    <Text as="div" variant="muted" className="flex items-center justify-end h-7">
-                        {result && operation}
-                    </Text>
-                    <div className={`flex items-center justify-between h-9`}>
-                        <Text variant="muted" className="">=</Text>
-                        <Text variant="blast" className="">{result || operation}</Text>
-                    </div>
-                </div>
-            )
-        }
-
-        /* Calculadora - funcao map feito para listar os botoes da const buttons */
-        function Calculator() {
+        
+        function useCalculator(){
             const [operation, setOperation] = React.useState('');
             const [result, setResult] = React.useState('');
+
             const { updateHistory } = React.useContext(CalculatorContext)
 
-            /* funcao evento de click nos numeros */
-            function handleInputClick(input) {
+            function doOperation(input){
                 /* Clear na operação */
                 if (input === "C") {
                     setOperation("");
@@ -244,6 +229,37 @@
 
 
                 setOperation(`${operation}${input}`)
+            }
+
+            return {
+                operation, 
+                result,
+                doOperation,
+            }
+        }
+        
+        /* Componente Display*/
+        function Display({ operation, result }) {
+            return (
+                <div className={`flex flex-col gap-2 px-[1.375rem] cursor-default select-none`}>
+                    <Text as="div" variant="muted" className="flex items-center justify-end h-7">
+                        {result && operation}
+                    </Text>
+                    <div className={`flex items-center justify-between h-9`}>
+                        <Text variant="muted" className="">=</Text>
+                        <Text variant="blast" className="">{result || operation}</Text>
+                    </div>
+                </div>
+            )
+        }
+
+        /* Calculadora - funcao map feito para listar os botoes da const buttons */
+        function Calculator() {
+            const {operation, result, doOperation} = useCalculator();
+
+            /* funcao evento de click nos numeros */
+            function handleInputClick(input) {
+                doOperation(input)
             }
 
             return (
