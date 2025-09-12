@@ -27,10 +27,31 @@
                 <>
                     <p>Contador: {counter}</p>
                     <button onClick={()=> setCounter(prevValue => prevValue + 1)} disabled={counter >= 10}>Incrementar</button>
-                    <button onClick={()=>  setCounter((prevValue) => prevValue > 0 ? prevValue - 1: 0)} disabled={counter ===0}> Decrementar </button>
-
-                    
+                    <button onClick={()=>  setCounter((prevValue) => prevValue > 0 ? prevValue - 1: 0)} disabled={counter ===0}> Decrementar </button>                    
                 </>
+            )
+        }
+
+        function ListName(){
+            const [names] = React.useState(["Leandro", "Gordo Torto", "Fofoqueiro", "Ancudo", "Mariposo", "PaocomAlho"])
+            const [search, setSearch] = React.useState("");
+
+            return (
+                <div>
+                    <div>
+                        <p>Pesquisa de nomes:</p>
+                        <input type="text" placeholder="Buscar nome, digite aqui" value={search} onChange={event => setSearch(event.target.value)}/>
+                    </div>
+
+                    <p>Lista de Nomes:</p>
+                    <ul>
+                      {names.filter(names => names.toLowerCase().includes(search.toLowerCase())).map((name,index) =>(
+                        <li key={`${index}-${name}`}>{name}</li>
+                      ))}
+
+                      
+                    </ul>
+                </div>
             )
         }
 
@@ -42,6 +63,7 @@
             return (
                 <main>
                    <Counter />
+                   <ListName />
                 </main>
             )
         }
